@@ -104,7 +104,7 @@ data class SmsData(val message: String, val timestamp: LocalDateTime) {
         val today = LocalDate.now()
 
         return if (today == timestamp.toLocalDate()) {
-            "${timestamp.hour}:${timestamp.minute}"
+            "${timestamp.hour}:${if(timestamp.minute < 10) "0${timestamp.minute}" else timestamp.minute}"
         } else {
             "${timestamp.dayOfMonth} ${
                 timestamp.month.getDisplayName(
