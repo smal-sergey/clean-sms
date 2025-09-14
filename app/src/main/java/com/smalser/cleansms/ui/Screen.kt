@@ -1,9 +1,11 @@
-package com.esmalser.cleansms.ui
+package com.smalser.cleansms.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,33 +23,39 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.time.LocalDate
-import java.time.LocalDateTime
+import com.smalser.cleansms.ui.state.MainUiState
+import com.smalser.cleansms.ui.state.SenderSmsUiState
+import com.smalser.cleansms.ui.state.smsGenerator
 
 @Composable
-fun MainView(modifier: Modifier, smsList: List<SenderWithSms>) {
-    Column(modifier = modifier) {
-        smsList.forEach {
-            SmsRowPreviewView(modifier, it)
+fun MainView(modifier: Modifier, mainUiState: MainUiState) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.Top) {
+        mainUiState.senderUiStates.forEach {
+            SmsRowPreviewView(Modifier, it)
         }
     }
-
 }
 
 @Composable
-fun SmsRowPreviewView(modifier: Modifier, senderWithSms: SenderWithSms) {
+fun SmsRowPreviewView(modifier: Modifier, senderWithSms: SenderSmsUiState) {
     Row(
         modifier = modifier
             .padding(10.dp)
             .height(48.dp)
+            .fillMaxWidth()
     ) {
-        SenderAvatarPlaceholder(modifier = modifier)
-        Column(modifier = modifier.padding(start = 10.dp)) {
-            Text(modifier = modifier.padding(top = 5.dp), text = senderWithSms.sender.name)
+        SenderAvatarPlaceholder(modifier = Modifier)
+        Column(modifier = Modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .weight(1f)
+        ) {
+            Text(modifier = Modifier.padding(top = 3.dp),
+                fontSize = 15.sp,
+                text = senderWithSms.sender.name)
             Text(
-                modifier = modifier
-                    .padding(top = 5.dp)
-                    .width(200.dp),
+                modifier = Modifier
+                    .padding(top = 3.dp)
+                    .fillMaxWidth(),
                 fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -55,7 +63,7 @@ fun SmsRowPreviewView(modifier: Modifier, senderWithSms: SenderWithSms) {
             )
         }
         Text(
-            modifier = modifier
+            modifier = Modifier
                 .padding(5.dp)
                 .width(30.dp),
             fontSize = 10.sp,
@@ -84,36 +92,6 @@ fun SenderAvatarPlaceholder(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun MainViewPreview() {
-    val smsGenerator: (Int) -> SenderWithSms = { i ->
-        val sender = Sender("Singtel", null)
-        val sms = listOf(
-            SmsData(
-                "<ADV> Some super cool proposal specially for you!",
-                LocalDateTime.now().minusDays(i.toLong())
-            )
-        )
-        SenderWithSms(sender, sms)
-    }
-
-    MainView(modifier = Modifier, List(5) { smsGenerator(it) })
+    MainView(modifier = Modifier, MainUiState(List(10) { smsGenerator(it) }))
 }
 
-data class SenderWithSms(val sender: Sender, val sms: List<SmsData>)
-data class SmsData(val message: String, val timestamp: LocalDateTime) {
-    fun formatTimestamp(): String {
-        val today = LocalDate.now()
-
-        return if (today == timestamp.toLocalDate()) {
-            "${timestamp.hour}:${if(timestamp.minute < 10) "0${timestamp.minute}" else timestamp.minute}"
-        } else {
-            "${timestamp.dayOfMonth} ${
-                timestamp.month.getDisplayName(
-                    java.time.format.TextStyle.SHORT,
-                    java.util.Locale.getDefault()
-                )
-            }"
-        }
-    }
-}
-
-data class Sender(val name: String, val image: String?)

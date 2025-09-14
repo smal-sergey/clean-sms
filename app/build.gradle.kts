@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.esmalser.cleansms"
+    namespace = "com.smalser.cleansms"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.esmalser.cleansms"
+        applicationId = "com.smalser.cleansms"
         minSdk = 28
         targetSdk = 36
         versionCode = 1

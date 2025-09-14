@@ -1,4 +1,4 @@
-package com.esmalser.cleansms.ui.theme
+package com.smalser.cleansms.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

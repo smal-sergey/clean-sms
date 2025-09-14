@@ -1,4 +1,4 @@
-package com.esmalser.cleansms
+package com.smalser.cleansms
 
 import org.junit.Test
 
