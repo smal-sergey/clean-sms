@@ -14,21 +14,17 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.smalser.cleansms.model.SmsMessageData
 import com.smalser.cleansms.ui.MainView
 import com.smalser.cleansms.ui.MainViewModel
 import com.smalser.cleansms.ui.state.SenderSmsUiState
 import com.smalser.cleansms.ui.state.SenderUiState
 import com.smalser.cleansms.ui.theme.CleanSMSTheme
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
@@ -152,25 +148,14 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Bind the visibility of the progressBar to the state
-                // of isFetchingArticles.
-                viewModel.uiState
-//                    .map { it.isFetchingArticles }
-//                    .distinctUntilChanged()
-                    .collect {
-                        setContent {
-                            CleanSMSTheme {
-                                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                                    MainView(
-                                        modifier = Modifier.padding(top = 50.dp),
-                                        it
-                                    )
-                                }
-                            }
-                        }
-                    }
+        setContent {
+            CleanSMSTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MainView(
+                        modifier = Modifier.padding(innerPadding),
+                        viewModel.uiState.collectAsState().value
+                    )
+                }
             }
         }
     }
